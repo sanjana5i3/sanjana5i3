@@ -1,0 +1,225 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+// Model for Product
+class Product {
+  final String name;
+  final double price;
+
+  Product({
+    required this.name,
+    required this.price,
+  });
+}
+
+// Cart Model to manage state
+class CartModel extends ChangeNotifier {
+  // A map to store products and their quantities
+  Map<Product, int> _cartItems = {};
+
+  Map<Product, int> get cartItems => _cartItems;
+
+  double get totalPrice {
+    double total = 0;
+    _cartItems.forEach((product, quantity) {
+      total += product.price * quantity;
+    });
+    return total;
+  }
+
+  // Add or update the quantity of a product in the cart
+  void addToCart(Product product) {
+    if (_cartItems.containsKey(product)) {
+      _cartItems[product] = _cartItems[product]! + 1; // Increase quantity
+    } else {
+      _cartItems[product] = 1; // Add product with quantity 1
+    }
+    notifyListeners();
+  }
+
+  // Remove product from cart completely
+  void removeFromCart(Product product) {
+    _cartItems.remove(product);
+    notifyListeners();
+  }
+
+  // Decrease product quantity in cart
+  void decreaseQuantity(Product product) {
+    if (_cartItems.containsKey(product) && _cartItems[product]! > 1) {
+      _cartItems[product] = _cartItems[product]! - 1;
+    } else {
+      removeFromCart(product); // Remove if quantity is 1
+    }
+    notifyListeners();
+  }
+
+  // Clear the cart
+  void clearCart() {
+    _cartItems.clear();
+    notifyListeners();
+  }
+}
+
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => CartModel(),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Shopping Cart',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: ProductListPage(),
+    );
+  }
+}
+
+class ProductListPage extends StatelessWidget {
+  final List<Product> products = [
+    Product(name: "Apple", price: 2.5),
+    Product(name: "Banana", price: 1.2),
+    Product(name: "Orange", price: 1.8),
+    Product(name: "Grapes", price: 3.0),
+    Product(name: "Mango", price: 2.8),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Product List"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.shopping_cart),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CartPage()),
+              );
+            },
+          )
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          final product = products[index];
+          final cart = Provider.of<CartModel>(context);
+
+          return ListTile(
+            title: Text(product.name),
+            subtitle: Text("\$${product.price.toStringAsFixed(2)}"),
+            trailing: IconButton(
+              icon: Icon(
+                cart.cartItems.containsKey(product)
+                    ? Icons.remove_shopping_cart
+                    : Icons.add_shopping_cart,
+                color: cart.cartItems.containsKey(product)
+                    ? Colors.red
+                    : Colors.green,
+              ),
+              onPressed: () {
+                if (cart.cartItems.containsKey(product)) {
+                  cart.removeFromCart(product);
+                } else {
+                  cart.addToCart(product);
+                }
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class CartPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final cart = Provider.of<CartModel>(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Your Cart"),
+      ),
+      body: cart.cartItems.isEmpty
+          ? Center(child: Text("Your cart is empty!"))
+          : ListView.builder(
+        itemCount: cart.cartItems.keys.length,
+        itemBuilder: (context, index) {
+          final product = cart.cartItems.keys.toList()[index];
+          final quantity = cart.cartItems[product]!;
+
+          return ListTile(
+            title: Text(product.name),
+            subtitle: Text("\$${product.price.toStringAsFixed(2)} x $quantity"),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.remove),
+                  onPressed: () {
+                    cart.decreaseQuantity(product);
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    cart.addToCart(product);
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Total: \$${cart.totalPrice.toStringAsFixed(2)}",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Implement checkout or clear cart logic
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text("Checkout"),
+                    content: Text("Total: \$${cart.totalPrice.toStringAsFixed(2)}"),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          cart.clearCart();
+                          Navigator.pop(context);
+                        },
+                        child: Text("Clear Cart"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("Cancel"),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: Text("Checkout"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
