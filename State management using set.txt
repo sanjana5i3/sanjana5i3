@@ -1,0 +1,66 @@
+import 'package:flutter/material.dart';
+void main() {
+  runApp(MyApp());
+}
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Task List (setState)',
+      home: HomeScreen(),
+    );
+  }
+}
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+class _HomeScreenState extends State<HomeScreen> {
+  List<String> tasks = []; // List of tasks
+  List<bool> taskCompletionStatus = []; // To track completion status for each task
+  void _addTask(String task) {
+    setState(() {
+      tasks.add(task); // Add task to the list
+      taskCompletionStatus.add(false); // Add completion status for the new task
+    });
+  }
+  void _toggleTaskCompletion(int index) {
+    setState(() {
+      taskCompletionStatus[index] = !taskCompletionStatus[index]; // Toggle completion status
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Task List (setState)'),
+      ),
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              _addTask('New Task'); // Add a sample task
+            },
+            child: Text('Add Task'),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: tasks.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(tasks[index]),
+                  trailing: Checkbox(
+                    value: taskCompletionStatus[index], // Use task's completion status
+                    onChanged: (bool? value) {
+                      _toggleTaskCompletion(index); // Toggle completion status for the specific task
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}  

@@ -1,0 +1,134 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ResponsiveHome(),
+    );
+  }
+}
+
+class ResponsiveHome extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Get the screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+    // Define breakpoints
+    bool isMobile = screenWidth < 600; // Mobile breakpoint
+    bool isTablet = screenWidth >= 600 && screenWidth < 1200; // Tablet breakpoint
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Responsive UI with Breakpoints'),
+      ),
+      body: Center(
+        child: isMobile
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: _buildMobileLayout(),
+              )
+            : isTablet
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: _buildTabletLayout(),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: _buildDesktopLayout(),
+                  ),
+      ),
+    );
+  }
+
+  // Mobile layout
+  List<Widget> _buildMobileLayout() {
+    return [
+      Container(
+        width: 300,
+        height: 100,
+        color: Colors.blue,
+        child: const Center(
+          child: Text(
+            'Mobile Layout',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+      const SizedBox(height: 20),
+      Container(
+        width: 300,
+        height: 100,
+        color: Colors.red,
+        child: const Center(
+          child: Text(
+            'Another Mobile Box',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    ];
+  }
+
+  // Tablet layout
+  List<Widget> _buildTabletLayout() {
+    return [
+      Container(
+        width: 250,
+        height: 150,
+        color: Colors.blue,
+        child: const Center(
+          child: Text(
+            'Tablet Layout',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+      const SizedBox(width: 20),
+      Container(
+        width: 250,
+        height: 150,
+        color: Colors.red,
+        child: const Center(
+          child: Text(
+            'Another Tablet Box',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    ];
+  }
+
+  // Desktop layout
+  List<Widget> _buildDesktopLayout() {
+    return [
+      Container(
+        width: 200,
+        height: 200,
+        color: Colors.blue,
+        child: const Center(
+          child: Text(
+            'Desktop Layout',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+      const SizedBox(width: 20),
+      Container(
+        width: 200,
+        height: 200,
+        color: Colors.red,
+        child: const Center(
+          child: Text(
+            'Another Desktop Box',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    ];
+  }
+}

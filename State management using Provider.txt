@@ -1,0 +1,62 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class TaskProvider extends ChangeNotifier {
+  List<String> _tasks = []; // List of tasks
+  List<String> get tasks => _tasks;
+
+  void addTask(String task) {
+    _tasks.add(task); // Add task to the list
+    notifyListeners(); // Notify listeners to update the UI
+  }
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => TaskProvider(),
+      child: MaterialApp(
+        title: 'Provider Example',
+        home: HomeScreen(),
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final taskProvider = Provider.of<TaskProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Task List (Provider)'),
+      ),
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              taskProvider.addTask('New Task'); // Add task globally
+            },
+            child: const Text('Add Task'),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: taskProvider.tasks.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(taskProvider.tasks[index]),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

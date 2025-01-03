@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration Form</title>
+    <script>
+        function validateForm() {
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let phone = document.getElementById("phone").value;
+            let message = "";
+
+            if (name === "") {
+                message += "Name is required.\n";
+            }
+            if (email === "") {
+                message += "Email is required.\n";
+            } else if (!/\S+@\S+\.\S+/.test(email)) {
+                message += "Please enter a valid email.\n";
+            }
+            if (phone === "") {
+                message += "Phone number is required.\n";
+            } else if (!/^\d{10}$/.test(phone)) {
+                message += "Please enter a valid 10-digit phone number.\n";
+            }
+
+            if (message !== "") {
+                alert(message);
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+
+<h2>Event Registration Form</h2>
+<form onsubmit="return validateForm()">
+    <label for="name">Full Name:</label><br>
+    <input type="text" id="name" name="name"><br><br>
+
+    <label for="email">Email Address:</label><br>
+    <input type="email" id="email" name="email"><br><br>
+
+    <label for="phone">Phone Number:</label><br>
+    <input type="text" id="phone" name="phone"><br><br>
+
+    <input type="submit" value="Register">
+</form>
+
+</body>
+</html>

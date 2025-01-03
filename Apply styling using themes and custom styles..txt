@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+void main() {
+  runApp(MyApp());
+}
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      // Define the theme
+      theme: ThemeData(
+        // Define the primary color
+        primaryColor: Colors.blue,
+        // Define the text theme
+        textTheme: TextTheme(
+          titleLarge: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue,
+          ),
+          titleMedium: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.green,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 16,
+            color: Colors.black87,
+          ),
+        ),
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Styling with Themes and Custom Styles'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Text styled using the theme's titleLarge style
+              Text(
+                'Styled with Theme',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              SizedBox(height: 20),
+              // Text styled using the theme's titleMedium style
+              Text(
+                'Styled with Theme',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              SizedBox(height: 20),
+              // Text styled using the theme's bodyLarge style
+              Text(
+                'Styled with Theme',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              SizedBox(height: 20),
+              // Button styled using the theme's primary color
+              ElevatedButton(
+                onPressed: () {},
+                child: Text('Button styled with Theme'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
